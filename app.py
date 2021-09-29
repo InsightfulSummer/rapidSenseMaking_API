@@ -7,6 +7,9 @@ from flask_cors import CORS
 from grobid_client.grobid_client import GrobidClient
 from classes.processPDF import ProcessPDF
 from classes.clusterDocuments import ClusterDocuments
+from classes.summarizeDocument import SummarizeDocument
+from classes.hyperSimilarity import HyperSimilarity
+from classes.comparison import Comparison
 import json
 
 app = Flask(__name__)
@@ -79,6 +82,44 @@ def skimmingDocument():
     document = ProcessPDF("./processResult/"+reqID+"/"+docID+".tei.xml", docID)
     parsedBody = document.getBody()
     return {"parsedBody":parsedBody}
+
+@app.route("/summarizeDocument", methods=['POST'])
+def summarizeDocument():
+    reqID = request.form.get('reqID')
+    docID = request.form.get('docID')
+    size = request.form.get('size')
+    summarizer = SummarizeDocument(reqID, docID, size)
+    summary = summarizer.summarizeText()
+    return {"summary":summary}
+
+@app.route("/hyperSimilarity/findSents", methods=['POST'])
+def hyperSimilarity_sent():
+    reqID = request.form.get('reqID')
+    docID = request.form.get('docID')
+    topN = request.form.get('topN')
+    sentence = request.form.get('sentence')
+    hyperSimilarity = HyperSimilarity(reqID, docID, topN)
+    similarSentences = hyperSimilarity.findSimilarSentences(sentence)
+    return {"similarSentences":similarSentences}
+
+@app.route("/hyperSimilarity/findDocs", methods=['POST'])
+def hyperSimilarity_doc():
+    reqID = reqID = request.form.get('reqID')
+    docID = request.form.get('docID')
+    topN = request.form.get('topN')
+    sentence = request.form.get('sentence')
+    hyperSimilarity = HyperSimilarity(reqID, docID, topN)
+    similarDocuments = hyperSimilarity.findSimilarDocs(sentence)
+    return {"similarDocuments":similarDocuments}
+
+@app.route("/comparison/basicComparison", methods=['POST'])
+def basicComparison():
+    reqID = request.form.get('reqID')
+    doc1 = request.form.get('doc1')
+    doc2 = request.form.get('doc2')
+    comparison = Comparison(reqID, doc1, doc2)
+    cosineRes = comparison.calculateSimilarity()
+    return {"comparisonResult":cosineRes}
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
