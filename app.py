@@ -118,8 +118,18 @@ def basicComparison():
     doc1 = request.form.get('doc1')
     doc2 = request.form.get('doc2')
     comparison = Comparison(reqID, doc1, doc2)
-    cosineRes = comparison.calculateSimilarity()
-    return {"comparisonResult":cosineRes}
+    comparisonRes = comparison.basicComparison()
+    return {"comparisonRes":comparisonRes}
+
+@app.route("/comparison/searchAndCompare", methods=['POST'])
+def searchAndCompare():
+    reqID = request.form.get('reqID')
+    doc1 = request.form.get('doc1')
+    doc2 = request.form.get('doc2')
+    searchTerm = request.form.get('searchTerm')
+    comparison = Comparison(reqID, doc1, doc2)
+    searchRes = comparison.searchAndCompare(searchTerm)
+    return {"searchRes":searchRes}
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

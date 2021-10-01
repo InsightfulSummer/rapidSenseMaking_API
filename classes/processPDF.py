@@ -117,11 +117,15 @@ class ProcessPDF:
                 refs.append(title_)
         return refs
 
-    def getBody(self):
+    def getBody(self, wf=None):
         body = []
         body_ = self.bs_content.find_all("body")
-        bodyText_ = self.getBodyText()
-        wordFreq = self.processText_.getNormalizedWordFrequency(bodyText_)
+        wordFreq = None
+        if wf == None:
+            bodyText_ = self.getBodyText()
+            wordFreq = self.processText_.getNormalizedWordFrequency(bodyText_)
+        else:
+            wordFreq = wf
         sentenceId = 0
         if len(body_) > 0 :
             body_divs = body_[0].find_all('div')
