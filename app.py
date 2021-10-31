@@ -52,7 +52,9 @@ def pdfHandling():
     data_ = []
     with open("./processResult/"+reqID+"/"+reqID+".json","r") as overall:
         data_ = json.load(overall)
-        data_.append(pdf.getJson())
+        json_obj = pdf.getJson()
+        if pdf.validateDictAsJson(json_obj) and json_obj["publishingDate"] != "":
+            data_.append(pdf.getJson())
     with open("./processResult/"+reqID+"/"+reqID+".json", "w") as file_ : 
         json.dump(data_,file_)
     

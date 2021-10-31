@@ -22,10 +22,13 @@ class ProcessPDF:
             if t.has_attr("level") and t.has_attr("type"):
                 if t['level'] == 'a' or t['type'] == 'main':
                     mainTitle = t.text
-                    break
+                    break;
 
         if mainTitle == "":
-            mainTitle = titles[0]
+            mainTitle = titles[0].text
+            
+        if mainTitle == "":
+            mainTitle = "Unable to recognize title!"
         return mainTitle
 
     def getPublishingDate(self):
@@ -37,7 +40,7 @@ class ProcessPDF:
                 publicationDate = dates[0]['when']
         if publicationDate == "":
             dates = self.bs_content.find_all("date")
-            if len(dates) > 0 :
+            if len(dates) > 0:
                 if dates[0].has_attr("when"):
                     publicationDate = dates[0]['when']
         return publicationDate
@@ -212,16 +215,18 @@ class ProcessPDF:
         return body
 
     def getPublisher(self):
-        publisher = ""
+        publisher = ''
         publicationstmt = self.bs_content.find_all("publicationstmt")
         if len(publicationstmt) > 0 :
             publisher_ = publicationstmt[0].find_all("publisher")
             if len(publisher_) > 0 :
                 publisher = publisher_[0].text
-        if publisher == "":
+        if publisher == '':
             publishers = self.bs_content.find_all("publisher")
             if len(publishers) > 0:
                 publisher = publishers[0].text
+        if publisher == '':
+            publisher = "Unable to recognize publisher!"
         return publisher
     
     def getJson(self):
@@ -235,3 +240,11 @@ class ProcessPDF:
             "abstract" : self.getAbstract(),
             "outlinks" : self.getOutlinks()
         }
+
+    def validateDictAsJson(self, dict_):
+        json_str = json.dumps(dict_)
+        try:
+            json.loads(json_str)
+        except ValueError as e:
+            return False
+        return True

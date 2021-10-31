@@ -90,11 +90,11 @@ class ClusterDocuments:
         optimalK = silhouette_scores.index(max(silhouette_scores)) + K[0]
         kmeans_ = KMeans(n_clusters=optimalK,random_state=1234, n_init=number_of_features)
         kmeans_ = kmeans_.fit_predict(reduced_vectors)
-        clusters = np.unique(kmeans_)
-        for c in clusters:
-            arr = [c_ for c_ in kmeans_ if c_ == c]
-            if(len(arr) < len(self.data)*0.05):
-                optimalK = optimalK - 1
+        # clusters = np.unique(kmeans_)
+        # for c in clusters:
+        #     arr = [c_ for c_ in kmeans_ if c_ == c]
+        #     if(len(arr) < len(self.data)*0.05):
+        #         optimalK = optimalK - 1
         # 5- cluster documents with the optimal K
         kmeans_ = KMeans(n_clusters=optimalK,random_state=1234, n_init=number_of_features)
         kmeans_ = kmeans_.fit_predict(reduced_vectors)
